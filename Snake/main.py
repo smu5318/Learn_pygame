@@ -32,7 +32,7 @@ snake = Snake()
 
 # Vars
 start_game = False
-tick_game = 0
+tick_game = 1
 
 up_move = False
 down_move = False
@@ -41,8 +41,6 @@ right_move = False
 
 running = True
 while running:
-
-    last_start = start_game
 
     # FPS
     clock.tick(cons.WINDOW_FPS)
@@ -67,24 +65,11 @@ while running:
                 right_move = True
 
         if event.type == pygame.KEYUP:
-            if not start_game:
-                start_game = True
-                continue
-
-            if event.key == pygame.K_ESCAPE:
-                start_game = False
-                continue
+            pass
 
     # Move
     if start_game:
-        snake.move(up_move, left_move, down_move,right_move)
-    
-        
-
-        print("Up: ", up_move)
-        print("Down: ", down_move)
-        print("Left: ", left_move)
-        print("Right: ", right_move)
+        snake.move(up_move, left_move, down_move,right_move, tick_game)
         
         up_move = False
         down_move = False
@@ -101,12 +86,11 @@ while running:
 
     snake.draw(window)
 
-     # Pause game
-    if not start_game:
-        window.blit(init_text, init_text.get_rect(center = (cons.WINDOW_WIDTH // 2, cons.WINDOW_HEIGHT // 2)))
-
     pygame.display.flip()
 
-    # Init
-    if (not last_start) and start_game:
+    tick_game += 1
+
+     # Init game
+    if not start_game:
         pygame.time.wait(cons.WINDOW_WAIT)
+        start_game = True

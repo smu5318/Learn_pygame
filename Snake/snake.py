@@ -4,7 +4,8 @@ import constants as cons
 class Snake():
     def __init__(self):
 
-        self.direction = "e"    #n, e, s, w
+        self.direction = cons.SNAKE_DIRECTIONS[1][0]    #n, e, s, w
+        self.type_direction = "x" #x, y
 
         self.snake: list = [cons.SNAKE_INITPOSITION, 
             (cons.SNAKE_INITPOSITION[0] -1, cons.SNAKE_INITPOSITION[1]),
@@ -15,74 +16,78 @@ class Snake():
         self.move_down = False
         self.move_right = False
 
-    def move(self, up_move, left_move, down_move, right_move):
+    def move(self, up_move: bool, left_move: bool, down_move: bool, right_move: bool, tick_game: int):
         
-        self.move_up == up_move
-        self.move_left == left_move
-        self.move_down == down_move
-        self.move_right == right_move
+        self.move_up = up_move
+        self.move_left = left_move
+        self.move_down = down_move
+        self.move_right = right_move
 
-        if self.move_up and self.direction != "n" and self.direction != "s":
-            self.direction = "n"
-            print("up")
- 
-        elif self.move_left and self.direction != "w" and self.direction != "e":
-            self.direction = "w"
+        if self.type_direction == "x":
 
-        elif self.move_down and self.direction != "s" and self.direction != "n":
-            self.direction = "s"
-        
-        elif self.move_right and self.direction != "e" and self.direction != "w":
-            self.direction = "e"
+            if self.move_up and (not self.direction in cons.SNAKE_DIRECTIONS[0]) :
+                self.direction = "n"
+            elif self.move_down and (not self.direction in cons.SNAKE_DIRECTIONS[0]):
+                self.direction = "s"
 
-        pygame.time.wait(cons.SNAKE_WAITMOVEMENT)
-
-        new_snake: list = []
-        index = 0
-        while index < len(self.snake):
+        elif self.type_direction == "y":
             
-            new_coordinates = None
-
-            if index != 0:
-                new_coordinates = self.snake[index - 1]
-                new_snake.insert(index, new_coordinates)
-
-            else:
-                if self.direction == "e":
-                    old_coordinates = self.snake[index]
-                    new_coordinates = (old_coordinates[0] + 1, old_coordinates[1])
-                    new_snake.insert(index, new_coordinates)
-
-                elif self.direction == "n":
-                    old_coordinates = self.snake[index]
-                    new_coordinates = (old_coordinates[0], old_coordinates[1] - 1)
-                    new_snake.insert(index, new_coordinates)
-
-                elif self.direction == "w":
-                    old_coordinates = self.snake[index]
-                    new_coordinates = (old_coordinates[0] - 1, old_coordinates[1])
-                    new_snake.insert(index, new_coordinates)
-
-                elif self.direction == "s":
-                    old_coordinates = self.snake[index]
-                    new_coordinates = (old_coordinates[0], old_coordinates[1] + 1)
-                    new_snake.insert(index, new_coordinates)
-
-            print(new_snake, "\n", index)
+            if self.move_left and (not self.direction in cons.SNAKE_DIRECTIONS[1]):
+                self.direction = "w"
+            elif self.move_right and (not self.direction in cons.SNAKE_DIRECTIONS[1]):
+                self.direction = "e"
+        
+        if tick_game % cons.SNAKE_WAITMOVEMENT == 0 or tick_game == 1:      
             
-            index += 1
+            new_snake: list = []  
+            index = 0
+
+            while index < len(self.snake):
+                
+                new_coordinates = None
+
+                if index != 0:
+                    new_coordinates = self.snake[index - 1]
+                    new_snake.insert(index, new_coordinates)
+
+                else:
+                    if self.direction == "e":
+                        old_coordinates = self.snake[index]
+                        new_coordinates = (old_coordinates[0] + 1, old_coordinates[1])
+                        new_snake.insert(index, new_coordinates)
+
+                    elif self.direction == "n":
+                        old_coordinates = self.snake[index]
+                        new_coordinates = (old_coordinates[0], old_coordinates[1] - 1)
+                        new_snake.insert(index, new_coordinates)
+
+                    elif self.direction == "w":
+                        old_coordinates = self.snake[index]
+                        new_coordinates = (old_coordinates[0] - 1, old_coordinates[1])
+                        new_snake.insert(index, new_coordinates)
+
+                    elif self.direction == "s":
+                        old_coordinates = self.snake[index]
+                        new_coordinates = (old_coordinates[0], old_coordinates[1] + 1)
+                        new_snake.insert(index, new_coordinates)
+                
+                index += 1
         
-        print("old snake: ", self.snake)
-        
-        self.snake.clear()
-        self.snake = new_snake
-        
-        print("new snake: ", self.snake)
-        print("DIRECTION: ", self.direction)
-        print("Up: ", self.move_up)
-        print("Down: ", self.move_down)
-        print("Left: ", self.move_left)
-        print("Right: ", self.move_right)
+            #print("old snake: ", self.snake)
+            
+            self.snake.clear()
+            self.snake = new_snake
+
+            if self.direction in cons.SNAKE_DIRECTIONS[0]:
+                self.type_direction = "y"
+            elif self.direction in cons.SNAKE_DIRECTIONS[1]:
+                self.type_direction = "x"
+            
+            print("new snake: ", self.snake)
+            print("DIRECTION: ", self.direction, "\n")
+
+    def eat(self):
+        pass
 
     def draw(self, window):
         
